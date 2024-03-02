@@ -39,31 +39,24 @@ function doughnutChart(data){
   const labels = Object.keys(data);
   const values = Object.values(data);
 
-  // Obtain the 2D context of the canvas
-  const canvas = d3.select("#doughnutChart").node().getContext("2d");
+  const percentValues = calculatePercentage(values);
 
-  if (donutData) {
-    donutData.destroy(); // Destroy the existing chart if it exists
-  }
+  // Obtain the context of the canvas
+  const canvas = d3.select("#doughnutChart").node();
+
   donutData = new Chart(canvas, {
     type:"doughnut",
     data: {
       labels: labels,
       datasets: [{
-        data: values,
+        data: percentValues,
+        label: "Percentage(%)",
         backgroundColor: [
           'rgba(75, 192, 192, 1)',
           'rgba(255, 99, 132, 1)',
           'rgba(54, 162, 235, 1)',
           'rgba(255, 206, 86, 1)'
-        ],
-        borderColor: [
-          'rgba(255, 255, 255, 1)',
-          'rgba(255, 255, 255, 1)',
-          'rgba(255, 255, 255, 1)',
-          'rgba(255, 255, 255, 1)'
-        ],
-        borderWidth: 2
+        ]
       }]
     },
     options: {
@@ -84,10 +77,12 @@ function doughnutChart(data){
 function updateChart(data) {
   const labels = Object.keys(data);
   const values = Object.values(data);
-
+  
+  const percentValues = calculatePercentage(values);
+  
   // Update chart data
   donutData.data.labels = labels;
-  donutData.data.datasets[0].data = values;
+  donutData.data.datasets[0].data = percentValues;
 
   // Redraw the chart
   donutData.update();
@@ -122,4 +117,15 @@ function calculateTotalsForNeighborhood(neighborhood) {
     }
   }
   return totals;
+}
+
+function calculatePercentage(total){
+  let percentArray = [];
+  let overallTotal = calculateTotal(total);
+  for (let i=0;i<total.length; i++){
+    let perc = ((total[i]/overallTotal)*100).toFixed(2);
+    percentArray.push(perc);
+    
+  }
+  return percentArray;
 }
