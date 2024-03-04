@@ -1,26 +1,33 @@
 const url = "https://fgsalomao.github.io/Project-3/resources/crime_data.json";
 let donutData = null;
-doughnutChart({});
-let metadata = {};
+let bubbleData = null; // Variable to hold bubble chart data
 
+// Initialize both charts with empty data
+doughnutChart({});
+bubbleChart({});
+
+let metadata = {};
 
 // Fetch the JSON data and console log it
 let dataPromise = d3.json(url).then(function(data) {
   metadata = data;
 
+  // Clear previous options
+  d3.select("#selDataset").html('');
+
+  // Append default option
   d3.select("#selDataset").append("option").attr("value","").html('--Select one--');
 
   console.log(metadata);
 
+  // Append options based on metadata
   for (const key in data) {
     d3.select("#selDataset").append("option").attr("value",key).html(key);
   }
-  
 });
 
-
+// Function to handle option change in dropdown
 function optionChanged(district) {
-
   if (district != '') {
     console.log(district);
 
@@ -30,11 +37,11 @@ function optionChanged(district) {
     let crimeData = calculateTotalsForNeighborhood(selected_district);
     console.log(crimeData);
     updateChart(crimeData);
-    
+    updateBubbleChart(crimeData); // Update bubble chart with new data
   }
-  
 }
 
+// Function to create and update the doughnut chart
 function doughnutChart(data){
   const labels = Object.keys(data);
   const values = Object.values(data);
@@ -42,7 +49,7 @@ function doughnutChart(data){
   const percentValues = calculatePercentage(values);
 
   // Obtain the context of the canvas
-  const canvas = d3.select("#doughnutChart").node();
+  const canvas = document.getElementById('doughnutChart').getContext('2d');
 
   donutData = new Chart(canvas, {
     type:"doughnut",
@@ -50,7 +57,7 @@ function doughnutChart(data){
       labels: labels,
       datasets: [{
         data: percentValues,
-        label: "Percentage(%)",
+        label: labels, // Main label for the dataset
         backgroundColor: [
           'rgba(75, 192, 192, 1)',
           'rgba(255, 99, 132, 1)',
@@ -63,17 +70,42 @@ function doughnutChart(data){
       responsive: true,
       plugins: {
         legend: {
+          display: true,
           position: 'top',
+          labels: {
+            fontColor: 'black', // Legend label color
+            generateLabels: function(chart) {
+              // Generate custom legend labels for doughnut chart
+              return chart.data.labels.map(function(label, index) {
+                return {
+                  text: label, // Label text
+                  fillStyle: chart.data.datasets[0].backgroundColor[index], // Match fill style with doughnut color
+                  hidden: false, // Show all legends by default
+                  strokeStyle: '',
+                  lineWidth: 0, // Border width
+                  pointStyle: 'circle' // Bubble shape
+                };
+              });
+            }
+          }
         },
         title: {
           display: true,
           text: 'Crime Distribution'
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return `${context.parsed}%`;
+            }
+          }
         }
       }
     },
-  })
+  });
 }
 
+// Function to update the doughnut chart with new data
 function updateChart(data) {
   const labels = Object.keys(data);
   const values = Object.values(data);
@@ -88,19 +120,112 @@ function updateChart(data) {
   donutData.update();
 }
 
-function displayMetaData(m) {
-  //console.log(m);
-  d3.select("#sample-metadata").html('');
-  //for (var key in m){
-  //  let info = key + ": " + m[key];
-  //  d3.select("#sample-metadata").append("h6").html(info);
-  //}
+// Function to create and update the bubble chart
+function bubbleChart(data) {
+  // Obtain the context of the canvas
+  const canvas = document.getElementById('bubbleChart').getContext('2d');
+
+  bubbleData = new Chart(canvas, {
+    type: 'bubble',
+    data: {
+      datasets: [{
+        label: 'Crime Totals', // Main label for the dataset
+        data: [], // Bubble chart data will be added dynamically
+        backgroundColor: [
+          'rgba(75, 192, 192, 1)',
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)'
+        ],
+        borderColor: [
+          'rgba(75, 192, 192, 1)',
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)'
+        ],
+        borderWidth: 1,
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          title: {
+            display: true,
+            text: 'Overall Total'
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Totals by Crime'
+          }
+        }
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: 'Crime Totals'
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return `Total: ${context.raw.x}, Overall Total: ${context.raw.y}`;
+            }
+          }
+        },
+        legend: {
+          display: true,
+          labels: {
+            fontColor: 'black', // Legend label color
+            fontSize: 12, // Legend label font size
+            generateLabels: function(chart) {
+              // Generate custom legend labels for bubble chart
+              return chart.data.datasets[0].data.map(function(dataPoint, index) {
+                return {
+                  text: dataPoint.label, // Label text
+                  fillStyle: bubbleData.data.datasets[0].backgroundColor[index], // Match fill style with bubble color
+                  strokeStyle: bubbleData.data.datasets[0].borderColor[index], // Match border style with bubble color
+                  hidden: false, // Show all legends by default
+                  lineWidth: 1, // Border width
+                  pointStyle: 'circle' // Bubble shape
+                };
+              });
+            }
+          }
+        }
+      }
+    }
+  });
 }
 
-//function for calculating the total of an array
+// Function to update the bubble chart with new data
+function updateBubbleChart(data) {
+  const labels = Object.keys(data);
+  const values = Object.values(data);
+
+  // Determine the scaling factor for the bubble sizes
+  const maxTotal = Math.max(...values);
+  const minTotal = Math.min(...values);
+  const scalingFactor = 50 / (maxTotal - minTotal); // Adjust this value as needed to control bubble sizes
+
+  // Generate bubble chart data
+  const bubbleChartData = labels.map((label, index) => ({
+    label: label,
+    x: values[index],
+    y: maxTotal, // Y-value remains constant to keep the bubble sizes consistent
+    r: (values[index] - minTotal) * scalingFactor // Bubble size based on crime values and scaling factor
+  }));
+
+  // Update chart data
+  bubbleData.data.datasets[0].data = bubbleChartData;
+
+  // Redraw the chart
+  bubbleData.update();
+}
+
+// Function to calculate the total of an array
 function calculateTotal(array){
-  let result = array.reduce((total,value) => total + value, 0);
-  return result;
+  return array.reduce((total,value) => total + value, 0);
 }
 
 // Function to calculate crime totals for each neighborhood
@@ -119,13 +244,13 @@ function calculateTotalsForNeighborhood(neighborhood) {
   return totals;
 }
 
+// Function to calculate percentage
 function calculatePercentage(total){
   let percentArray = [];
   let overallTotal = calculateTotal(total);
   for (let i=0;i<total.length; i++){
     let perc = ((total[i]/overallTotal)*100).toFixed(2);
-    percentArray.push(perc);
-    
+    percentArray.push(perc);   
   }
   return percentArray;
 }
