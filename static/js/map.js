@@ -131,12 +131,17 @@ d3.json(geoData).then(function(data) {
       let center = polygon.getBounds().getCenter();
       pop_bubbles.push(
         L.circle([center.lng,center.lat], {
-          stroke: false,
-          fillOpacity: 0.75,
-          color: "#09cbed",
+          stroke: true,
+          fillOpacity: 0.5,
+          color: "darkgrey",
+          weight:1,
           fillColor: "#09cbed",
           radius: markerSize(features[i].properties.population_2023)
         })
+        .bindPopup(
+          "<strong>" + features[i].properties.AREA_NAME + "</strong><hr>" +
+          "<br /><strong> 2023 Polulation: " + features[i].properties.population_2023 + "</strong>"
+          )
       );
       info_markers.push(
         L.marker([center.lng,center.lat])
@@ -154,19 +159,19 @@ d3.json(geoData).then(function(data) {
   }
 
   let map_bubbles = L.layerGroup(pop_bubbles);
-  let map_markers = L.layerGroup(info_markers).addTo(myMap);
+  let map_markers = L.layerGroup(info_markers);
 
   let choro_group = L.layerGroup(geojson);
 
   // Controls
   let baseMaps = {
     Choropleth: geojson,
-    "Heap Map": heat
+    "Heap Map": heat,
+    "Population Bubble": map_bubbles
   };
 
   let overlayMaps = {
-    "Markers": map_markers,
-    "Population Bubble": map_bubbles
+    "Markers": map_markers
   };
 
   L.control.layers(baseMaps,overlayMaps,{
