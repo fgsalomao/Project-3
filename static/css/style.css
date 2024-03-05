@@ -3,7 +3,18 @@ body {
   margin: 0;
 }
 
-#map,
+
+#map {
+  width: 100%;
+  height: 98vh;
+  top: 0;
+  left: 0;
+  /* margin:0;
+  padding:0; 
+  border: 1px solid black;
+  border-radius: 8px; */
+}
+
 body,
 html {
   height: 100%;
@@ -32,7 +43,7 @@ html {
 }
 .legend li {
   display: inline-block;
-  width: 30px;
+  width: 10%;
   height: 22px;
 }
 .legend .min {
@@ -45,4 +56,17 @@ html {
 
 h1 {
   text-align: center;
+}
+
+.fill
+{
+    min-height: 100%;
+    height: 100%;
+    width: 100%;
+    min-width: 100%;
+}
+
+#navbarNavAltMarkup
+{
+  margin-left: auto;
 }
