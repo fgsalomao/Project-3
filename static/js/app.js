@@ -1,10 +1,12 @@
 const url = "https://fgsalomao.github.io/Project-3/resources/crime_data.json";
 let donutData = null;
 let bubbleData = null; // Variable to hold bubble chart data
+let lineData = null;
 
 // Initialize both charts with empty data
 doughnutChart({});
 bubbleChart({});
+linechart({});
 
 let metadata = {};
 
@@ -38,6 +40,7 @@ function optionChanged(district) {
     console.log(crimeData);
     updateChart(crimeData);
     updateBubbleChart(crimeData); // Update bubble chart with new data
+    linechart(selected_district);
   }
 }
 
@@ -254,3 +257,59 @@ function calculatePercentage(total){
   }
   return percentArray;
 }
+function linechart (data){
+  const ctx = document.getElementById('linechart').getContext('2d');
+  const labels = [2014,2015,2016,2017,2018,2019,2020,2021,2022,2023];
+  const datas = {
+    labels: labels,
+    datasets: [{
+      label: 'Bike_Theft',
+      data: data.BIKETHEFT_2014to2023,
+      fill: false,
+      borderColor: 'rgba(75, 192, 192, 1)',
+      tension: 0.1
+    },
+    
+    {
+      label: 'Auto_Theft',
+      data: data.AUTOTHEFT_2014to2023,
+      fill: false,
+      borderColor: 'rgba(255, 99, 132, 1)',
+      tension: 0.1
+    },
+
+    {
+      label: 'BreakEnter',
+      data: data.BREAKENTER_2014to2023,
+      fill: false,
+      borderColor: 'rgba(54, 162, 235, 1)',
+      tension: 0.1
+    },
+
+    {
+      label: 'Shootings',
+      data: data.SHOOTING_2014to2023,
+      fill: false,
+      borderColor: 'rgba(255, 206, 86, 1)',
+      tension: 0.1
+    }
+]
+  };
+  linedata = new Chart(ctx, {
+    type: 'line',
+    data: datas
+  });
+}
+
+function updatelinechart(data) {
+  // Update chart data
+  linedata.data.datasets[0].data = data.BIKETHEFT_2014to2023;
+  linedata.data.datasets[1].data = data.AUTOTHEFT_2014to2023;
+  linedata.data.datasets[2].data = data.BREAKENTER_2014to2023;
+  linedata.data.datasets[3].data = data.SHOOTING_2014to2023;
+  // Redraw the chart
+  lineData.update();
+}
+
+
+
