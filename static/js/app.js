@@ -22,6 +22,11 @@ let dataPromise = d3.json(url).then(function(data) {
 
   console.log(metadata);
 
+  let toronto_sum = {}
+  for (const key in data) {
+    
+  }
+
   // Append options based on metadata
   for (const key in data) {
     d3.select("#selDataset").append("option").attr("value",key).html(key);
@@ -40,7 +45,7 @@ function optionChanged(district) {
     console.log(crimeData);
     updateChart(crimeData);
     updateBubbleChart(crimeData); // Update bubble chart with new data
-    linechart(selected_district);
+    updatelinechart(selected_district);
   }
 }
 
@@ -94,7 +99,7 @@ function doughnutChart(data){
         },
         title: {
           display: true,
-          text: 'Crime Distribution'
+          text: 'Crime Distribution (%)'
         },
         tooltip: {
           callbacks: {
@@ -263,50 +268,76 @@ function linechart (data){
   const datas = {
     labels: labels,
     datasets: [{
-      label: 'Bike_Theft',
-      data: data.BIKETHEFT_2014to2023,
+      label: 'SHOOTING',
+      data: data.SHOOTING_2014to2023,
       fill: false,
       borderColor: 'rgba(75, 192, 192, 1)',
+      backgroundColor: 'rgba(75, 192, 192, 1)',
       tension: 0.1
     },
     
     {
-      label: 'Auto_Theft',
+      label: 'AUTOTHEFT',
       data: data.AUTOTHEFT_2014to2023,
       fill: false,
       borderColor: 'rgba(255, 99, 132, 1)',
+      backgroundColor: 'rgba(255, 99, 132, 1)',
       tension: 0.1
     },
 
     {
-      label: 'BreakEnter',
-      data: data.BREAKENTER_2014to2023,
+      label: 'BIKETHEFT',
+      data: data.BIKETHEFT_2014to2023,
       fill: false,
       borderColor: 'rgba(54, 162, 235, 1)',
+      backgroundColor: 'rgba(54, 162, 235, 1)',
       tension: 0.1
     },
 
     {
-      label: 'Shootings',
-      data: data.SHOOTING_2014to2023,
+      label: 'BREAKENTER',
+      data: data.BREAKENTER_2014to2023,
       fill: false,
       borderColor: 'rgba(255, 206, 86, 1)',
+      backgroundColor: 'rgba(255, 206, 86, 1)',
       tension: 0.1
-    }
-]
+    }]
   };
-  linedata = new Chart(ctx, {
+
+  lineData = new Chart(ctx, {
     type: 'line',
-    data: datas
+    data: datas,
+    options: {
+      scales: {
+        y: {
+          title: {
+            display: true,
+            text: '# of Crimes'
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Year'
+          }
+        }
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: '2014-2023 Crime Data'
+        }
+      }
+    }
   });
 }
 
 function updatelinechart(data) {
   // Update chart data
-  linedata.data.datasets[0].data = data.BIKETHEFT_2014to2023;
-  linedata.data.datasets[1].data = data.AUTOTHEFT_2014to2023;
-  linedata.data.datasets[2].data = data.BREAKENTER_2014to2023;
-  linedata.data.datasets[3].data = data.SHOOTING_2014to2023;
+  lineData.data.datasets[0].data = data.SHOOTING_2014to2023;
+  lineData.data.datasets[1].data = data.AUTOTHEFT_2014to2023;
+  lineData.data.datasets[2].data = data.BIKETHEFT_2014to2023;
+  lineData.data.datasets[3].data = data.BREAKENTER_2014to2023;
   // Redraw the chart
   lineData.update();
 }
