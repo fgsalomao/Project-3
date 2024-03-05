@@ -22,10 +22,14 @@ let dataPromise = d3.json(url).then(function(data) {
 
   console.log(metadata);
 
+  console.log(Object.keys(metadata)[0]);
+
   let toronto_sum = {}
-  for (const key in data) {
-    
+  for (const key in metadata[Object.keys(data)[0]]) {
+    toronto_sum[key] = 0
   }
+
+  console.log(toronto_sum);
 
   // Append options based on metadata
   for (const key in data) {
@@ -268,39 +272,39 @@ function linechart (data){
   const datas = {
     labels: labels,
     datasets: [{
-      label: 'SHOOTING',
+      /* label: 'SHOOTING',
       data: data.SHOOTING_2014to2023,
       fill: false,
       borderColor: 'rgba(75, 192, 192, 1)',
       backgroundColor: 'rgba(75, 192, 192, 1)',
-      tension: 0.1
+      tension: 0.1 */
     },
     
     {
-      label: 'AUTOTHEFT',
+      /* label: 'AUTOTHEFT',
       data: data.AUTOTHEFT_2014to2023,
       fill: false,
       borderColor: 'rgba(255, 99, 132, 1)',
       backgroundColor: 'rgba(255, 99, 132, 1)',
-      tension: 0.1
+      tension: 0 */
     },
 
     {
-      label: 'BIKETHEFT',
+      /* label: 'BIKETHEFT',
       data: data.BIKETHEFT_2014to2023,
       fill: false,
       borderColor: 'rgba(54, 162, 235, 1)',
       backgroundColor: 'rgba(54, 162, 235, 1)',
-      tension: 0.1
+      tension: 0 */
     },
 
     {
-      label: 'BREAKENTER',
+      /* label: 'BREAKENTER',
       data: data.BREAKENTER_2014to2023,
       fill: false,
       borderColor: 'rgba(255, 206, 86, 1)',
       backgroundColor: 'rgba(255, 206, 86, 1)',
-      tension: 0.1
+      tension: 0 */
     }]
   };
 
@@ -326,6 +330,13 @@ function linechart (data){
         title: {
           display: true,
           text: '2014-2023 Crime Data'
+        },
+        legend: {
+          display: false,
+          labels: {
+            fontColor: 'black', // Legend label color
+            fontSize: 12
+          }
         }
       }
     }
@@ -334,10 +345,39 @@ function linechart (data){
 
 function updatelinechart(data) {
   // Update chart data
+  //lineData.data.datasets[0].data = data.SHOOTING_2014to2023;
+  lineData.data.datasets[0].label = 'SHOOTING';
   lineData.data.datasets[0].data = data.SHOOTING_2014to2023;
+  lineData.data.datasets[0].fill = false;
+  lineData.data.datasets[0].borderColor = 'rgba(75, 192, 192, 1)';
+  lineData.data.datasets[0].backgroundColor = 'rgba(75, 192, 192, 1)';
+  lineData.data.datasets[0].tension = 0;
+
+  //lineData.data.datasets[1].data = data.AUTOTHEFT_2014to2023;
+  lineData.data.datasets[1].label = 'AUTOTHEFT';
   lineData.data.datasets[1].data = data.AUTOTHEFT_2014to2023;
+  lineData.data.datasets[1].fill = false;
+  lineData.data.datasets[1].borderColor = 'rgba(255, 99, 132, 1)';
+  lineData.data.datasets[1].backgroundColor = 'rgba(255, 99, 132, 1)';
+  lineData.data.datasets[1].tension = 0;
+
+  //lineData.data.datasets[2].data = data.BIKETHEFT_2014to2023;
+  lineData.data.datasets[2].label = 'BIKETHEFT';
   lineData.data.datasets[2].data = data.BIKETHEFT_2014to2023;
+  lineData.data.datasets[2].fill = false;
+  lineData.data.datasets[2].borderColor = 'rgba(54, 162, 235, 1)';
+  lineData.data.datasets[2].backgroundColor = 'rgba(54, 162, 235, 1)';
+  lineData.data.datasets[2].tension = 0;
+
+  //lineData.data.datasets[3].data = data.BREAKENTER_2014to2023;
+  lineData.data.datasets[3].label = 'BREAKENTER';
   lineData.data.datasets[3].data = data.BREAKENTER_2014to2023;
+  lineData.data.datasets[3].fill = false;
+  lineData.data.datasets[3].borderColor = 'rgba(255, 206, 86, 1)';
+  lineData.data.datasets[3].backgroundColor = 'rgba(255, 206, 86, 1)';
+  lineData.data.datasets[3].tension = 0
+
+  lineData.options.plugins.legend.display = true;
   // Redraw the chart
   lineData.update();
 }

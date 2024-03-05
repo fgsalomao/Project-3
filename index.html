@@ -13,12 +13,35 @@
 </head>
 
 <body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Toronto City Crime Data Dashboard</a>
+      
+
+      <!-- <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-link " href="./index.html">Chart View</a>
+          <a class="nav-link active" aria-current="page" href="./map.html">Map View</a>
+        </div>
+      </div> -->
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item active">
+            <a class="nav-link"  href="./index.html">Chart View</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./map.html">Map View</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
   <div class="container">
     <div class="row">
       <div class="col-md-12 p-5 text-center bg-light">
-        <h1>Toronto City Crime Data Dashboard</h1>
-        <p>Use the interactive charts below to explore the dataset</p>
+        <h1></h1>
+        <h3>Use the dropdown to select a neighborhood</h3>
       </div>
     </div>
     <div class="row">
@@ -27,12 +50,7 @@
           <h6>Neighborhoods:</h6>
           <select id="selDataset" onchange="optionChanged(this.value)"></select>
         </div>
-        <div class="card card-primary">
-          <div class="card-header">
-            <h4 class="card-title">Extra Info</h4>
-          </div>
-          <div id="sample-metadata" class="card-body"></div>
-        </div>
+        
       </div>
       <div class="col-md-5">
         <div id="line"><canvas id="linechart" width="450" height="450"></canvas></div>
