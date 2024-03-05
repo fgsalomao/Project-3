@@ -214,15 +214,15 @@ function updateBubbleChart(data) {
   // Determine the scaling factor for the bubble sizes
   const maxTotal = Math.max(...values);
   const minTotal = Math.min(...values);
-  const scalingFactor = 50 / (maxTotal - minTotal); // Adjust this value as needed to control bubble sizes
+  const scalingFactor = 80 / (maxTotal - minTotal); // Adjust this value as needed to control bubble sizes
 
   // Generate bubble chart data
   const bubbleChartData = labels.map((label, index) => ({
     label: label,
     x: values[index],
     y: maxTotal, // Y-value remains constant to keep the bubble sizes consistent
-    r: (values[index] - minTotal) * scalingFactor // Bubble size based on crime values and scaling factor
-  }));
+    r: index === 0 ? 3 : (values[index] - minTotal) * scalingFactor // Bubble size based on crime values and scaling factor
+  })).slice(0,4); // Limit to display only four bubbles
 
   // Update chart data
   bubbleData.data.datasets[0].data = bubbleChartData;
