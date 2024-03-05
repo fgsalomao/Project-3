@@ -22,14 +22,43 @@ let dataPromise = d3.json(url).then(function(data) {
 
   console.log(metadata);
 
-  console.log(Object.keys(metadata)[0]);
-
+  // Calculate and insert the data for entire Toronto
   let toronto_sum = {}
   for (const key in metadata[Object.keys(data)[0]]) {
-    toronto_sum[key] = 0
+    if (Array.isArray(metadata[Object.keys(data)[0]][key]))
+    {
+      toronto_sum[key] = [0,0,0,0,0,0,0,0,0,0,]
+    }
+    else
+    {
+      toronto_sum[key] = 0
+    }
+    
   }
 
-  console.log(toronto_sum);
+  for (const d in metadata) 
+  {
+    for (const f in metadata[d])
+    {
+      if (Array.isArray(metadata[d][f]))
+      {
+        var array_sum = toronto_sum[f].map(function (num, idx) {
+          return num + metadata[d][f][idx];
+        });
+        toronto_sum[f] = array_sum;
+      }
+      else
+      {
+        toronto_sum[f] = toronto_sum[f] + metadata[d][f];
+      }
+    }
+  }
+
+  metadata['Toronto City'] = toronto_sum;
+  
+  // Add Toronto City as the first choice
+  d3.select("#selDataset").append("option").attr("value",'Toronto City').html('Toronto City');
+  
 
   // Append options based on metadata
   for (const key in data) {
@@ -40,13 +69,11 @@ let dataPromise = d3.json(url).then(function(data) {
 // Function to handle option change in dropdown
 function optionChanged(district) {
   if (district != '') {
-    console.log(district);
 
     let selected_district = metadata[district];
-    console.log(selected_district)
 
     let crimeData = calculateTotalsForNeighborhood(selected_district);
-    console.log(crimeData);
+
     updateChart(crimeData);
     updateBubbleChart(crimeData); // Update bubble chart with new data
     updatelinechart(selected_district);
