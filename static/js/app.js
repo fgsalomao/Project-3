@@ -22,25 +22,64 @@ let dataPromise = d3.json(url).then(function(data) {
 
   console.log(metadata);
 
+  // Calculate and insert the data for entire Toronto
+  let toronto_sum = {}
+  for (const key in metadata[Object.keys(data)[0]]) {
+    if (Array.isArray(metadata[Object.keys(data)[0]][key]))
+    {
+      toronto_sum[key] = [0,0,0,0,0,0,0,0,0,0,]
+    }
+    else
+    {
+      toronto_sum[key] = 0
+    }
+    
+  }
+
+  for (const d in metadata) 
+  {
+    for (const f in metadata[d])
+    {
+      if (Array.isArray(metadata[d][f]))
+      {
+        var array_sum = toronto_sum[f].map(function (num, idx) {
+          return num + metadata[d][f][idx];
+        });
+        toronto_sum[f] = array_sum;
+      }
+      else
+      {
+        toronto_sum[f] = toronto_sum[f] + metadata[d][f];
+      }
+    }
+  }
+
+  metadata['Toronto City'] = toronto_sum;
+  
+  // Add Toronto City as the first choice
+  d3.select("#selDataset").append("option").attr("value",'Toronto City').html('Toronto City');
+  
+
   // Append options based on metadata
   for (const key in data) {
-    d3.select("#selDataset").append("option").attr("value",key).html(key);
+    if (key != 'Toronto City')
+    {
+      d3.select("#selDataset").append("option").attr("value",key).html(key);
+    }
   }
 });
 
 // Function to handle option change in dropdown
 function optionChanged(district) {
   if (district != '') {
-    console.log(district);
 
     let selected_district = metadata[district];
-    console.log(selected_district)
 
     let crimeData = calculateTotalsForNeighborhood(selected_district);
-    console.log(crimeData);
+
     updateChart(crimeData);
     updateBubbleChart(crimeData); // Update bubble chart with new data
-    linechart(selected_district);
+    updatelinechart(selected_district);
   }
 }
 
@@ -94,7 +133,7 @@ function doughnutChart(data){
         },
         title: {
           display: true,
-          text: 'Crime Distribution'
+          text: 'Crime Distribution (%)'
         },
         tooltip: {
           callbacks: {
@@ -209,15 +248,15 @@ function updateBubbleChart(data) {
   // Determine the scaling factor for the bubble sizes
   const maxTotal = Math.max(...values);
   const minTotal = Math.min(...values);
-  const scalingFactor = 50 / (maxTotal - minTotal); // Adjust this value as needed to control bubble sizes
+  const scalingFactor = 80 / (maxTotal - minTotal); // Adjust this value as needed to control bubble sizes
 
   // Generate bubble chart data
   const bubbleChartData = labels.map((label, index) => ({
     label: label,
     x: values[index],
     y: maxTotal, // Y-value remains constant to keep the bubble sizes consistent
-    r: (values[index] - minTotal) * scalingFactor // Bubble size based on crime values and scaling factor
-  }));
+    r: index === 0 ? 3 : (values[index] - minTotal) * scalingFactor // Bubble size based on crime values and scaling factor
+  })).slice(0,4); // Limit to display only four bubbles
 
   // Update chart data
   bubbleData.data.datasets[0].data = bubbleChartData;
@@ -263,50 +302,112 @@ function linechart (data){
   const datas = {
     labels: labels,
     datasets: [{
-      label: 'Bike_Theft',
-      data: data.BIKETHEFT_2014to2023,
+      /* label: 'SHOOTING',
+      data: data.SHOOTING_2014to2023,
       fill: false,
       borderColor: 'rgba(75, 192, 192, 1)',
-      tension: 0.1
+      backgroundColor: 'rgba(75, 192, 192, 1)',
+      tension: 0.1 */
     },
     
     {
-      label: 'Auto_Theft',
+      /* label: 'AUTOTHEFT',
       data: data.AUTOTHEFT_2014to2023,
       fill: false,
       borderColor: 'rgba(255, 99, 132, 1)',
-      tension: 0.1
+      backgroundColor: 'rgba(255, 99, 132, 1)',
+      tension: 0 */
     },
 
     {
-      label: 'BreakEnter',
-      data: data.BREAKENTER_2014to2023,
+      /* label: 'BIKETHEFT',
+      data: data.BIKETHEFT_2014to2023,
       fill: false,
       borderColor: 'rgba(54, 162, 235, 1)',
-      tension: 0.1
+      backgroundColor: 'rgba(54, 162, 235, 1)',
+      tension: 0 */
     },
 
     {
-      label: 'Shootings',
-      data: data.SHOOTING_2014to2023,
+      /* label: 'BREAKENTER',
+      data: data.BREAKENTER_2014to2023,
       fill: false,
       borderColor: 'rgba(255, 206, 86, 1)',
-      tension: 0.1
-    }
-]
+      backgroundColor: 'rgba(255, 206, 86, 1)',
+      tension: 0 */
+    }]
   };
-  linedata = new Chart(ctx, {
+
+  lineData = new Chart(ctx, {
     type: 'line',
-    data: datas
+    data: datas,
+    options: {
+      scales: {
+        y: {
+          title: {
+            display: true,
+            text: '# of Crimes'
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Year'
+          }
+        }
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: '2014-2023 Crime Data'
+        },
+        legend: {
+          display: false,
+          labels: {
+            fontColor: 'black', // Legend label color
+            fontSize: 12
+          }
+        }
+      }
+    }
   });
 }
 
 function updatelinechart(data) {
   // Update chart data
-  linedata.data.datasets[0].data = data.BIKETHEFT_2014to2023;
-  linedata.data.datasets[1].data = data.AUTOTHEFT_2014to2023;
-  linedata.data.datasets[2].data = data.BREAKENTER_2014to2023;
-  linedata.data.datasets[3].data = data.SHOOTING_2014to2023;
+  //lineData.data.datasets[0].data = data.SHOOTING_2014to2023;
+  lineData.data.datasets[0].label = 'SHOOTING';
+  lineData.data.datasets[0].data = data.SHOOTING_2014to2023;
+  lineData.data.datasets[0].fill = false;
+  lineData.data.datasets[0].borderColor = 'rgba(75, 192, 192, 1)';
+  lineData.data.datasets[0].backgroundColor = 'rgba(75, 192, 192, 1)';
+  lineData.data.datasets[0].tension = 0;
+
+  //lineData.data.datasets[1].data = data.AUTOTHEFT_2014to2023;
+  lineData.data.datasets[1].label = 'AUTOTHEFT';
+  lineData.data.datasets[1].data = data.AUTOTHEFT_2014to2023;
+  lineData.data.datasets[1].fill = false;
+  lineData.data.datasets[1].borderColor = 'rgba(255, 99, 132, 1)';
+  lineData.data.datasets[1].backgroundColor = 'rgba(255, 99, 132, 1)';
+  lineData.data.datasets[1].tension = 0;
+
+  //lineData.data.datasets[2].data = data.BIKETHEFT_2014to2023;
+  lineData.data.datasets[2].label = 'BIKETHEFT';
+  lineData.data.datasets[2].data = data.BIKETHEFT_2014to2023;
+  lineData.data.datasets[2].fill = false;
+  lineData.data.datasets[2].borderColor = 'rgba(54, 162, 235, 1)';
+  lineData.data.datasets[2].backgroundColor = 'rgba(54, 162, 235, 1)';
+  lineData.data.datasets[2].tension = 0;
+
+  //lineData.data.datasets[3].data = data.BREAKENTER_2014to2023;
+  lineData.data.datasets[3].label = 'BREAKENTER';
+  lineData.data.datasets[3].data = data.BREAKENTER_2014to2023;
+  lineData.data.datasets[3].fill = false;
+  lineData.data.datasets[3].borderColor = 'rgba(255, 206, 86, 1)';
+  lineData.data.datasets[3].backgroundColor = 'rgba(255, 206, 86, 1)';
+  lineData.data.datasets[3].tension = 0
+
+  lineData.options.plugins.legend.display = true;
   // Redraw the chart
   lineData.update();
 }
