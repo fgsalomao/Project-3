@@ -409,5 +409,14 @@ function updatelinechart(data) {
   lineData.update();
 }
 
+// Function to handle window resize event
+function handleResize() {
+  // Redraw all charts
+  doughnutChart({});
+  bubbleChart({});
+  linechart({});
+}
 
+// Add event listener for window resize
+window.addEventListener('resize', handleResize);
 
