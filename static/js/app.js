@@ -62,7 +62,10 @@ let dataPromise = d3.json(url).then(function(data) {
 
   // Append options based on metadata
   for (const key in data) {
-    d3.select("#selDataset").append("option").attr("value",key).html(key);
+    if (key != 'Toronto City')
+    {
+      d3.select("#selDataset").append("option").attr("value",key).html(key);
+    }
   }
 });
 
