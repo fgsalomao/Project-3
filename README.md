@@ -3,11 +3,11 @@ A data visualization group project assignment for the University of Toronto Data
 
 ## Team Members
 **Ariana Kwapong**  
-**Divya Sajjan** 
+**Divya Sajjan**  
 **Felipe Salomao**   
-**Jeffrey Che** 
+**Jeffrey Che**  
 **Nes Atar**  
-**Shileola Akinyele** 
+**Shileola Akinyele**  
 
 ## Overview
 Exploring Trends in Crime Rates Analysis. This study looks at the Neighborhood crime rate in Toronto with a focus on 4 crime metrics (Bike theft, Auto theft, Break enter and Shooting), a period of 9 years is being considered (2014-2023). Data for this analysis was derived from the Toronto Police Service Public Safety Data Portal. The limitation associated with this study revolves around the completeness and timeliness of the data set. This can be linked to the way the data is being reported, approximate and not exact locations of crimes are being considered.
