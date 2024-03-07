@@ -21,6 +21,7 @@ Exploring Trends in Crime Rates Analysis. This study looks at the Neighborhood c
     1) Boostrap - To create the navigation bar on top of the pages.
     2) Chart.js - To draw charts on index.html.
     3) D3 - For DOM tree element editing.
+    4) Leaflet - To create map component and interactions.
 
 ## How to use
 1) https://fgsalomao.github.io/Project-3/index.html
@@ -31,7 +32,7 @@ Exploring Trends in Crime Rates Analysis. This study looks at the Neighborhood c
 
 
 ## Ethical considerations
-We used publically available data for the purpose of our study and visuals. It does not contain any personal information. We have hosted it publicly on Git Hub for any exploration of public interests. We do not have any algorithmic bias in the data that we are exploring or projecting as we are representing the crimes in the neighborhoods on crime statistics without reference to any individual or entity. 
+We used publicly available data for the purpose of our study and visuals. It does not contain any personal information. We have hosted it publicly on Github for any exploration of public interests. We do not have any algorithmic bias in the data that we are exploring or projecting as we are representing the crimes in the neighborhoods on crime statistics without reference to any individual or entity. 
 
 ## References
 Neighbourhood Crime Rates Open Data. (n.d.). Data.torontopolice.on.ca. 
