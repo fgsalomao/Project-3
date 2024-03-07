@@ -29,6 +29,7 @@ Exploring Trends in Crime Rates Analysis. This study looks at the Neighborhood c
     - Open index.html or map.html with a web browser.
     - On index.html, use the dropdown to filter selected data. Graphs will be populated onto the page.
     - On map.html, use the control panel to interact with the map.
+Extended GEOJSON data is also available via https: https://fgsalomao.github.io/Project-3/resources/Neighbourhood_Crime_Rates_Open_Data_Extended.geojson
 
 
 ## Ethical considerations
